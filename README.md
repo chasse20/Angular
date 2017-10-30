@@ -1,2 +1,2 @@
-# Angular
-Sample Angular App that ingests and exports XLSL
+# AngularSpecies
+Sample Angular App for classifying species that ingests and exports XLSL using JS, HTML5, CSS
