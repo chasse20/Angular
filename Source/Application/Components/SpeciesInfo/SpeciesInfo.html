@@ -1,0 +1,13 @@
+<div ng-if="species.model != null" style="display: inline;">
+	<button ng-click="species.isExpanded = !species.isExpanded">{{species.isExpanded ? "Shrink" : "Expand"}}</button>
+	<input type="text" ng-model="species.model.name"/>
+	<button ng-click="species.parent.removeChild( species.index )">Delete</button>
+	<br/>
+	<div ng-show="species.isExpanded" style="display: inline;">
+		<img ng-src="{{species.model.image}}"/>
+		<br/>
+		<input type="text" ng-model="species.model.commonName"/>
+		<br/>
+		<input type="text" ng-model="species.model.image"/>
+	</div>
+</div>

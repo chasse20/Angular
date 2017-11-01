@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html ng-app="species">
+	<head>
+		<title>Angular Species Browser</title>
+		<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+		<meta content="utf-8" http-equiv="encoding">
+		<script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
+		<link rel="stylesheet" href="Assets/CSS/layout.css">
+	</head>
+	<body>
+		<navigation></navigation>
+		<content></content>
+		
+		<script src="Application/app.js"></script>
+		
+		<script src="Application/Directives/FilesChange.directive.js"></script>
+		
+		<script src="Application/Models/Group.model.js"></script>
+		<script src="Application/Models/Species.model.js"></script>
+		
+		<script src="Application/Services/Data.service.js"></script>
+		<script src="Application/Services/Excel.service.js"></script>
+		
+		<script src="Application/Components/GroupInfo/GroupInfo.component.js"></script>
+		<script src="Application/Components/GroupInfo/GroupInfo.controller.js"></script>
+		<script src="Application/Components/Content/Content.component.js"></script>
+		<script src="Application/Components/Content/Content.controller.js"></script>
+		<script src="Application/Components/Navigation/Navigation.component.js"></script>
+		<script src="Application/Components/Navigation/Navigation.controller.js"></script>
+		<script src="Application/Components/SpeciesInfo/SpeciesInfo.component.js"></script>
+		<script src="Application/Components/SpeciesInfo/SpeciesInfo.controller.js"></script>
+	</body>
+</html>
