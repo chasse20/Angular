@@ -7,7 +7,7 @@
 	</div>
 	<button ng-click="group.parent.removeChild( group.index )" ng-if="group.parent != null">Delete</button>
 	<button ng-click="group.onCreate()">Create Child</button>
-	<div ng-if="group.isExpanded">
+	<div ng-show="group.isExpanded">
 		<ul ng-if="group.depth < 4">
 			<li ng-repeat="subGroup in group.model.children track by $index"><group-info model="subGroup" parent="group.model" index="$index" depth="group.depth + 1"></group-info></li>
 		</ul>

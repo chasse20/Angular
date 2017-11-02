@@ -1,7 +1,7 @@
-angular.module( "species" ).service( "Excel", [
-	function()
+angular.module( "species" ).service( "Excel", [ "Group", "Species", 
+	function( Group, Species )
 	{
-		this.Import = function( tExcel, tParent, tCallback, tCallbackContext )
+		this.Import = function( tExcel, tCallback, tCallbackContext )
 		{
 			var tempThis = this;
 			var tempReader = new FileReader();
@@ -10,381 +10,184 @@ angular.module( "species" ).service( "Excel", [
 				// Convert workbook into JS
 				var tempWorkbook = XLSX.read( tempReader.result, { type: "binary" } );
 				
-				// Process Templates
-				var tempTemplates = null;
-				for ( var i = ( tempWorkbook.SheetNames.length - 1 ); i > 0; --i )
+				// Store and convert sheet rows into KVP
+				var tempBindTables = {};
+				var tempSpeciesTable = null;
+				var tempRows = null;
+				var tempTableName = null;
+				for ( var i = ( tempWorkbook.SheetNames.length - 1 ); i >= 0; --i )
 				{
-					if ( tempTemplates == null )
+					tempTableName = tempWorkbook.SheetNames[i];
+					tempRows = XLSX.utils.sheet_to_json( tempWorkbook.Sheets[ tempTableName ] );
+					
+					if ( tempTableName == "Species" )
 					{
-						tempTemplates = {};
+						tempSpeciesTable = tempRows;
 					}
-					tempTemplates[ tempWorkbook.SheetNames[i] ] = tempThis.ReadTemplate( tempWorkbook.SheetNames[i], XLSX.utils.sheet_to_json( tempWorkbook.Sheets[ tempWorkbook.SheetNames[i] ], { header: 1 } ) );
+					else
+					{
+						var tempKVP = {};
+						var tempListLength = tempRows.length;
+						for ( var j = 0; j < tempListLength; ++j )
+						{
+							tempKVP[ tempRows[j].Name ] = tempRows[j];
+						}
+						
+						tempBindTables[ tempTableName ] = tempKVP;
+					}
 				}
 				
-				// Process Unit Info, assumed to be first sheet
-				tempThis.ReadUnitInfo( tParent, tempTemplates, XLSX.utils.sheet_to_json( tempWorkbook.Sheets[ tempWorkbook.SheetNames[0] ], { header: 1 } ) );
+				// Process hierarchy
+				var tempKingdoms = null;
+				var tempKingdomTable = tempBindTables[ "Kingdom" ];
+				if ( tempKingdomTable != null )
+				{
+					tempKingdoms = new Group( "Kingdoms" );
+					for ( var tempName in tempKingdomTable )
+					{
+						tempKingdomTable[ tempName ] = new Group( tempName );
+						tempKingdoms.addChild( tempKingdomTable[ tempName ] );
+					}
+					
+					var tempPhylumTable = tempBindTables[ "Phylum" ];
+					if ( tempPhylumTable != null )
+					{
+						tempThis.ReadGroupTable( tempPhylumTable, tempKingdomTable, "Kingdom" );
+						
+						var tempClassTable = tempBindTables[ "Class" ];
+						if ( tempClassTable != null )
+						{
+							tempThis.ReadGroupTable( tempClassTable, tempPhylumTable, "Phylum" );
+							
+							var tempOrderTable = tempBindTables[ "Order" ];
+							if ( tempOrderTable != null )
+							{
+								tempThis.ReadGroupTable( tempOrderTable, tempClassTable, "Class" );
+								
+								var tempFamilyTable = tempBindTables[ "Family" ];
+								if ( tempFamilyTable != null )
+								{
+									tempThis.ReadGroupTable( tempFamilyTable, tempOrderTable, "Order" );
+									
+									if ( tempSpeciesTable != null )
+									{
+										tempThis.ReadSpeciesTable( tempSpeciesTable, tempFamilyTable );
+									}
+								}
+							}
+						}
+					}
+				}
 				
 				// Callback
 				if ( tCallback != null )
 				{
-					tCallback.call( tCallbackContext );
+					tCallback.call( tCallbackContext, tempKingdoms );
 				}
 			};
 			
 			tempReader.readAsBinaryString( tExcel );
 		};
 		
-		this.ReadTemplate = function( tName, tRows )
+		this.ReadGroupTable = function( tChildTable, tParentTable, tParentName )
 		{
-			if ( tRows != null )
-			{				
-				// Generate units and add to KVP
-				var tempKVPUnits = null;
-				var tempUnit = null;
-				var tempListLength = tRows.length;
-				for ( var i = 0; i < tempListLength; ++i )
+			var tempGroup = null;
+			var tempParent = null;
+			for ( var tempName in tChildTable )
+			{
+				tempGroup = new Group( tempName );
+				tempParent = tParentTable[ tChildTable[ tempName ][ tParentName ] ];
+				if ( tempParent != null )
 				{
-					if ( tRows[i][0] == "U" ) // first column assumed type
-					{
-						var tempIterator = { index: i };
-						tempUnit = this.ReadTemplateUnit( tRows[i], tRows, tempIterator ); // iterator let's the template unit to skip through this for loop to avoid processing non-units
-						i = tempIterator.index;
-						
-						if ( tempUnit != null )
-						{
-							if ( tempKVPUnits == null )
-							{
-								tempKVPUnits = {};
-							}
-							tempKVPUnits[ tempUnit.name ] = tempUnit;
-						}
-					}
+					tempParent.addChild( tempGroup );
 				}
 				
-				// Parent units together via KVP
-				var tempTemplate = { name: tName };
-				
-				if ( tempKVPUnits != null )
-				{
-					for ( var tempKey in tempKVPUnits )
-					{
-						tempUnit = tempKVPUnits[ tempKey ];
-						tempUnit.parent = tempUnit.parent == null ? tempTemplate : tempKVPUnits[ tempUnit.parent ]; // null assumes top level of template
-						
-						if ( tempUnit.parent != null )
-						{
-							if ( tempUnit.parent.children == null )
-							{
-								tempUnit.parent.children = [];
-								tempUnit.parent.isExpandable = true;
-							}
-							tempUnit.parent.children.push( tempUnit );
-						}
-					}
-				}
-				
-				return tempTemplate;
+				tChildTable[ tempName ] = tempGroup;
 			}
-			
-			return null;
 		};
 		
-		this.ReadTemplateUnit = function( tUnitRow, tRows, tIterator )
+		this.ReadSpeciesTable = function( tSpeciesTable, tParentTable )
 		{
-			if ( tUnitRow[0] != null && tUnitRow[1] != null ) // column order is assumed
+			var tempRow = null;
+			var tempSpecies = null;
+			var tempParent = null;
+			var tempListLength = tSpeciesTable.length;
+			for ( var i = 0; i < tempListLength; ++i )
 			{
-				// Create unit
-				var tempUnit = {};
-				tempUnit.type = tUnitRow[0];
-				tempUnit.name = tUnitRow[1];
-				tempUnit.parent = ( tUnitRow[2] == "" || tUnitRow[2] == "TOP" ) ? null : tUnitRow[2];
-				tempUnit.echelon = tUnitRow[4]; // 3rd column is skipped
-				tempUnit.unitClass = tUnitRow[5];
-				tempUnit.charlie = tUnitRow[6];
-				
-				if ( tempUnit.charlie != null )
+				tempRow = tSpeciesTable[i];
+				tempSpecies = new Species( tempRow.Name, tempRow[ "Common Name" ], tempRow.Image );
+				tempParent = tParentTable[ tempRow.Family ];
+				if ( tempParent != null )
 				{
-					tempUnit.icon = armyc2.c2sd.renderer.MilStdSVGRenderer.Render( tempUnit.charlie ).getSVGDataURI();
+					tempParent.addChild( tempSpecies );
 				}
+			}
+		};
+		
+		this.Export = function( tKingdoms, tFileName )
+		{
+			if ( tKingdoms != null && tKingdoms.children != null )
+			{
+				// Generate sheets
+				var tempSheets = [];
+				tempSheets.push( [ [ "Name" ] ] );
+				tempSheets.push( [ [ "Name", "Kingdom" ] ] );
+				tempSheets.push( [ [ "Name", "Phylum" ] ] );
+				tempSheets.push( [ [ "Name", "Class" ] ] );
+				tempSheets.push( [ [ "Name", "Order" ] ] );
+				tempSheets.push( [ [ "Name", "Common Name", "Family", "Image" ] ] );
 				
-				// Generate equipment
-				var tempListLength = tRows.length;
-				for ( var i = ( tIterator.index + 1 ); i < tempListLength; ++i )
+				// Write hierarchy
+				this.WriteGroupSheet( tempSheets, 0, tKingdoms );
+				
+				tempSheetNames = [ "Kingdom", "Phylum", "Class", "Order", "Family", "Species" ];
+				
+				tempSheetsKVP = {};
+				tempSheetsKVP[ "Kingdom" ] = XLSX.utils.aoa_to_sheet( tempSheets[0] );
+				tempSheetsKVP[ "Phylum" ] = XLSX.utils.aoa_to_sheet( tempSheets[1] );
+				tempSheetsKVP[ "Class" ] = XLSX.utils.aoa_to_sheet( tempSheets[2] );
+				tempSheetsKVP[ "Order" ] = XLSX.utils.aoa_to_sheet( tempSheets[3] );
+				tempSheetsKVP[ "Family" ] = XLSX.utils.aoa_to_sheet( tempSheets[4] );
+				tempSheetsKVP[ "Species" ] = XLSX.utils.aoa_to_sheet( tempSheets[5] );
+				
+				// Save
+				saveAs( new Blob( [ this.StringToBuffer( XLSX.write( { SheetNames: tempSheetNames, Sheets: tempSheetsKVP }, { bookType: "xlsx", bookSST: true, type: "binary" } ) ) ], { type: "application/octet-stream" } ), tFileName + ".xlsx" );
+			}
+		};
+		
+		this.WriteGroupSheet = function( tSheets, tDepth, tGroup )
+		{
+			if ( tGroup.children != null )
+			{
+				var tempChild = null;
+				var tempListLength = tGroup.children.length;
+				switch ( tDepth )
 				{
-					if ( tRows[i][0] == "E" || tRows[i][0] == "W" ) // tow wagon structured same as equipment
-					{
-						tIterator.index = i;
-						var tempEquipment = this.ReadTemplateEquipment( tRows[i], tRows, tIterator );
-						i = tIterator.index;
-						
-						if ( tempEquipment != null )
+					case 0: // kingdom
+						for ( var i = 0; i < tempListLength; ++i )
 						{
-							if ( tempUnit.equipment == null )
-							{
-								tempUnit.equipment = [];
-								tempUnit.isExpandable = true;
-							}
-							tempUnit.equipment.push( tempEquipment );
+							tempChild = tGroup.children[i];
+							tSheets[0].push( [ tempChild.name ] );
+							this.WriteGroupSheet( tSheets, 1, tempChild );
 						}
-					}
-					else
-					{
-						tIterator.index = i - 1;
 						break;
-					}
-				}
-				
-				return tempUnit;
-			}
-			
-			return null;
-		};
-		
-		this.ReadTemplateEquipment = function( tEquipmentRow, tRows, tIterator )
-		{
-			if ( tEquipmentRow[3] != null ) // column order is assumed
-			{
-				// Create equipment
-				var tempEquipment = {};
-				tempEquipment.type = tEquipmentRow[0];
-				tempEquipment.name = tEquipmentRow[3];
-				tempEquipment.echelon = tEquipmentRow[4];
-				tempEquipment.unitClass = tEquipmentRow[5];
-				
-				// Generate personnel
-				var tempListLength = tRows.length;
-				for ( var i = ( tIterator.index + 1 ); i < tempListLength; ++i )
-				{
-					if ( tRows[i][0] == "P" )
-					{
-						tIterator.index = i;
-						var tempPersonnel = this.ReadTemplatePersonnel( tRows[i] );
-						i = tIterator.index;
-						
-						if ( tempPersonnel != null )
+					case 5: // species
+						for ( var i = 0; i < tempListLength; ++i )
 						{
-							if ( tempEquipment.personnel == null )
-							{
-								tempEquipment.personnel = [];
-								tempEquipment.isExpandable = true;
-							}
-							tempEquipment.personnel.push( tempPersonnel );
+							tempChild = tGroup.children[i];
+							tSheets[ tDepth ].push( [ tempChild.name, tempChild.commonName, tGroup.name, tempChild.image ] );
 						}
-					}
-					else
-					{
-						tIterator.index = i - 1;
 						break;
-					}
-				}
-				
-				return tempEquipment;
-			}
-			
-			return null;
-		};
-		
-		this.ReadTemplatePersonnel = function( tPersonnelRow )
-		{
-			var tempPersonnel = {}; // column order is assumed
-			tempPersonnel.type = tPersonnelRow[0];
-			tempPersonnel.name = tPersonnelRow[3];
-			tempPersonnel.weapon = tPersonnelRow[4];
-			
-			return tempPersonnel;
-		};
-		
-		this.ReadUnitInfo = function( tParent, tTemplates, tRows )
-		{
-			if ( tRows != null )
-			{
-				// Add to KVP if units have a name
-				var tempKVPUnits = null;
-				var tempUnit = null;
-				var tempListLength = tRows.length;
-				for ( var i = 1; i < tempListLength; ++i ) // skips first row/assumed header
-				{
-					tempUnit = this.ReadUnitInfoUnit( tRows[i], tTemplates );
-					
-					if ( tempUnit != null )
-					{
-						if ( tempKVPUnits == null )
+					default: // groups
+						for ( var i = 0; i < tempListLength; ++i )
 						{
-							tempKVPUnits = {};
+							tempChild = tGroup.children[i];
+							tSheets[ tDepth ].push( [ tempChild.name, tGroup.name ] );
+							this.WriteGroupSheet( tSheets, tDepth + 1, tempChild );
 						}
-						tempKVPUnits[ tempUnit.name ] = tempUnit;
-					}
-				}
-				
-				// Parent units together via KVP
-				if ( tempKVPUnits != null )
-				{
-					for ( var tempKey in tempKVPUnits )
-					{
-						tempUnit = tempKVPUnits[ tempKey ];
-						tempUnit.parent = tempUnit.parent == null ? tParent : tempKVPUnits[ tempUnit.parent ]; // null assumes top level
-						
-						if ( tempUnit.parent != null )
-						{
-							if ( tempUnit.parent.children == null )
-							{
-								tempUnit.parent.children = [];
-								tempUnit.parent.isExpandable = true;
-							}
-							tempUnit.parent.children.push( tempUnit );
-						}
-					}
+						break;
 				}
 			}
-		};
-		
-		this.ReadUnitInfoUnit = function( tUnitRow, tTemplates )
-		{
-			if ( tUnitRow[0] != null && tUnitRow[1] != null ) // column order is assumed
-			{
-				// Create unit
-				var tempUnit = {};
-				tempUnit.type = tUnitRow[0];
-				tempUnit.name = tUnitRow[1];
-				tempUnit.parent = ( tUnitRow[2] == "" || tUnitRow[2] == "TOP" ) ? null : tUnitRow[2];
-				tempUnit.uic = tUnitRow[3];
-				tempUnit.echelon = tUnitRow[4];
-				tempUnit.unitClass = tUnitRow[5];
-				
-				if ( tTemplates != null && tUnitRow[6] != null )
-				{
-					tempUnit.template = tTemplates[ tUnitRow[6] ];
-					if ( tempUnit.template == null )
-					{
-						console.log( "TEMPLATE NOT FOUND: " + tUnitRow[6] );
-					}
-					else
-					{
-						tempUnit.isExpandable = true;
-					}
-				}
-
-				tempUnit.charlie = tUnitRow[7];
-				if ( tempUnit.charlie != null )
-				{
-					tempUnit.icon = armyc2.c2sd.renderer.MilStdSVGRenderer.Render( tempUnit.charlie ).getSVGDataURI();
-				}
-				
-				return tempUnit;
-			}
-			
-			return null;
-		};
-		
-		this.WriteUnitInfoSheet = function( tSheet, tTemplates, tParent, tUnit )
-		{
-			if ( tSheet != null && tUnit != null )
-			{
-				// Store unit data as array
-				var tempUnitArray = []; // indices match header row
-				tempUnitArray[0] = tUnit.type;
-				tempUnitArray[1] = tUnit.name;
-				tempUnitArray[2] = tUnit.parent == null ? "" : ( tUnit.parent == tParent ? "TOP" : tUnit.parent.name );
-				tempUnitArray[3] = tUnit.uic;
-				tempUnitArray[4] = tUnit.echelon;
-				tempUnitArray[5] = tUnit.unitClass;
-				
-				if ( tUnit.template != null )
-				{
-					tTemplates[ tUnit.template.name ] = tUnit.template; // stores first occurence of used template
-				}
-				
-				tempUnitArray[6] = tUnit.template == null ? "" : tUnit.template.name;
-				tempUnitArray[7] = tUnit.charlie;
-				
-				tSheet.push( tempUnitArray );
-				
-				// Recurse through children
-				if ( tUnit.children != null )
-				{
-					var tempListLength = tUnit.children.length;
-					for ( var i = 0; i < tempListLength; ++i )
-					{
-						this.WriteUnitInfoSheet( tSheet, tTemplates, tParent, tUnit.children[i] );
-					}
-				}
-			}
-		};
-
-		this.WriteTemplateSheetUnit = function( tSheet, tTemplate, tUnit, tCounter )
-		{
-			// Store unit data as array
-			var tempUnitArray = []; // indices match header row
-			tempUnitArray[0] = tUnit.type;
-			tempUnitArray[1] = tUnit.name;
-			tempUnitArray[2] = tUnit.parent == null ? "" : ( tUnit.parent == tTemplate ? "TOP" : tUnit.parent.name );
-			tempUnitArray[3] = "";
-			tempUnitArray[4] = tUnit.echelon;
-			tempUnitArray[5] = tUnit.unitClass;
-			tempUnitArray[6] = tUnit.charlie;
-			
-			tSheet.push( tempUnitArray );
-			
-			// Store equipment
-			if ( tUnit.equipment != null )
-			{
-				var tempListLength = tUnit.equipment.length;
-				for ( var i = 0; i < tempListLength; ++i )
-				{
-					this.WriteTemplateSheetEquipment( tSheet, tUnit, tUnit.equipment[i], tCounter );
-				}
-			}
-			
-			// Recurse through children
-			if ( tUnit.children != null )
-			{
-				var tempListLength = tUnit.children.length;
-				for ( var i = 0; i < tempListLength; ++i )
-				{
-					this.WriteTemplateSheetUnit( tSheet, tTemplate, tUnit.children[i], tCounter );
-				}
-			}
-		};
-		
-		this.WriteTemplateSheetEquipment = function( tSheet, tUnit, tEquipment, tCounter )
-		{
-			// Store equipment data as array
-			var tempEquipmentArray = []; // indices match header row
-			tempEquipmentArray[0] = tEquipment.type;
-			tempEquipmentArray[1] = tCounter.index;
-			tempEquipmentArray[2] = tUnit.name;
-			tempEquipmentArray[3] = tEquipment.name;
-			tempEquipmentArray[4] = tEquipment.echelon;
-			tempEquipmentArray[5] = tEquipment.unitClass;
-			
-			tSheet.push( tempEquipmentArray );
-			
-			++tCounter.index;
-			
-			// Store personnel
-			if ( tEquipment.personnel != null )
-			{
-				var tempListLength = tEquipment.personnel.length;
-				for ( var i = 0; i < tempListLength; ++i )
-				{
-					this.WriteTemplateSheetPersonnel( tSheet, tEquipment.personnel[i], tempEquipmentArray[1], tCounter );
-				}
-			}
-		};
-		
-		this.WriteTemplateSheetPersonnel = function( tSheet, tPersonnel, tEquipmentIndex, tCounter )
-		{
-			// Store personnel data as array
-			var tempPersonnelArray = []; // indices match header row
-			tempPersonnelArray[0] = tPersonnel.type;
-			tempPersonnelArray[1] = tCounter.index;
-			tempPersonnelArray[2] = tEquipmentIndex;
-			tempPersonnelArray[3] = tPersonnel.name;
-			tempPersonnelArray[4] = tPersonnel.weapon;
-			
-			tSheet.push( tempPersonnelArray );
-			
-			++tCounter.index;
 		};
 		
 		this.StringToBuffer = function( tString )
@@ -398,44 +201,6 @@ angular.module( "species" ).service( "Excel", [
 			}
 			
 			return tempBuffer;
-		};
-		
-		this.Export = function( tParent, tUnit )
-		{
-			if ( tUnit != null )
-			{
-				// Generate Unit Info sheet
-				var tempSheet = [ [ "TYPE", "NAME", "PARENT", "UIC", "ECHELON", "UNIT CLASS", "TEMPLATE", "2525C" ] ]; // injecting header row
-				var tempTemplates = {};
-				this.WriteUnitInfoSheet( tempSheet, tempTemplates, tParent, tUnit );
-				
-				var tempSheetNames = [ "UNIT INFO" ];
-				var tempSheets = { "UNIT INFO": XLSX.utils.aoa_to_sheet( tempSheet ) };
-				
-				// Generate Templates
-				var tempTemplate = null;
-				for ( var tempKey in tempTemplates )
-				{
-					tempSheet = [];
-					
-					var tempIterator = { index: 1 };
-					tempTemplate = tempTemplates[ tempKey ];
-					if ( tempTemplate.children != null )
-					{
-						var tempListLength = tempTemplate.children.length;
-						for ( var i = 0; i < tempListLength; ++i )
-						{
-							this.WriteTemplateSheetUnit( tempSheet, tempTemplate, tempTemplate.children[i], tempIterator );
-						}
-					}
-					
-					tempSheetNames.push( tempKey );
-					tempSheets[ tempKey ] = XLSX.utils.aoa_to_sheet( tempSheet );
-				}
-				
-				// Save
-				saveAs( new Blob( [ this.StringToBuffer( XLSX.write( { SheetNames: tempSheetNames, Sheets: tempSheets }, { bookType: "xlsx", bookSST: true, type: "binary" } ) ) ], { type: "application/octet-stream" } ), tUnit.name + ".xlsx" );
-			}
 		};
 	}
 ] );

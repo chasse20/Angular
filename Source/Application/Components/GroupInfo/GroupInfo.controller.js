@@ -8,7 +8,7 @@ angular.module( "species" ).controller( "GroupInfo", [ "Group", "Species",
 		
 		this.onCreate = function()
 		{
-			this.model.addChild( this.depth >= 4 ? new Species() : new Group() );
+			this.model.addChild( this.depth >= 4 ? new Species( "New Species" ) : new Group( "New Group" ) );
 		};
 	}
 ] );
