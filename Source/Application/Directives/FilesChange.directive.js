@@ -1,3 +1,9 @@
+/**
+* @ngdoc directive
+* @name species.directive:onFilesChange
+* @description Handles callbacks for file input buttons
+* @restrict A
+*/
 angular.module( "species" ).directive( "onFilesChange",
 	function()
 	{

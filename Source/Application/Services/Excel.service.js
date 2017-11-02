@@ -1,6 +1,22 @@
+/**
+* @ngdoc service
+* @name species.service:Excel
+* @description Processor for importing and exporting excel files
+* @requires species.function:Group
+* @requires species.function:Species
+*/
 angular.module( "species" ).service( "Excel", [ "Group", "Species", 
 	function( Group, Species )
 	{
+		/**
+		* @ngdoc method
+		* @name species.service:Excel#Import
+		* @description Reads in an excel file and generates a hierarchy object
+		* @methodOf species.service:Excel
+		* @param {object} tExcel Raw excel file
+		* @param {object} tCallback Callback function
+		* @param {object} tCallbackContext Callback function context
+		*/
 		this.Import = function( tExcel, tCallback, tCallbackContext )
 		{
 			var tempThis = this;
@@ -89,6 +105,15 @@ angular.module( "species" ).service( "Excel", [ "Group", "Species",
 			tempReader.readAsBinaryString( tExcel );
 		};
 		
+		/**
+		* @ngdoc method
+		* @name species.service:Excel#ReadGroupTable
+		* @description Converts a group table entry into a Group instance and binds it to a parent instance
+		* @methodOf species.service:Excel
+		* @param {object} tChildTable Child Group table associative array
+		* @param {object} tParentTable Parent Group table associative array
+		* @param {string} tParentName Name of parent
+		*/
 		this.ReadGroupTable = function( tChildTable, tParentTable, tParentName )
 		{
 			var tempGroup = null;
@@ -106,6 +131,14 @@ angular.module( "species" ).service( "Excel", [ "Group", "Species",
 			}
 		};
 		
+		/**
+		* @ngdoc method
+		* @name species.service:Excel#ReadSpeciesTable
+		* @description Converts a species table entry into a Species instance and binds it to a parent instance
+		* @methodOf species.service:Excel
+		* @param {object} tSpeciesTable Species table row array
+		* @param {object} tParentTable Parent Group table associative array
+		*/
 		this.ReadSpeciesTable = function( tSpeciesTable, tParentTable )
 		{
 			var tempRow = null;
@@ -124,6 +157,14 @@ angular.module( "species" ).service( "Excel", [ "Group", "Species",
 			}
 		};
 		
+		/**
+		* @ngdoc method
+		* @name species.service:Excel#Export
+		* @description Exports an excel file using an input Group
+		* @methodOf species.service:Excel
+		* @param {object} tKingdoms Input Group representing Kingdoms
+		* @param {object} tFileName Name of export file
+		*/
 		this.Export = function( tKingdoms, tFileName )
 		{
 			if ( tKingdoms != null && tKingdoms.children != null )
@@ -155,6 +196,15 @@ angular.module( "species" ).service( "Excel", [ "Group", "Species",
 			}
 		};
 		
+		/**
+		* @ngdoc method
+		* @name species.service:Excel#WriteGroupSheet
+		* @description Writes an excel sheet of either a kingdom type, generic classification group type, or species type depending on the depth
+		* @methodOf species.service:Excel
+		* @param {object} tSheets Input sheets array with each element corresponding to depth
+		* @param {int} tDepth Depth of the hierarchy used to determine type of sheet to write
+		* @param {object} tGroup Group model
+		*/
 		this.WriteGroupSheet = function( tSheets, tDepth, tGroup )
 		{
 			if ( tGroup.children != null )
@@ -190,6 +240,14 @@ angular.module( "species" ).service( "Excel", [ "Group", "Species",
 			}
 		};
 		
+		/**
+		* @ngdoc method
+		* @name species.service:Excel#StringToBuffer
+		* @description Converts string to binary buffer
+		* @methodOf species.service:Excel
+		* @param {string} tString String to convert
+		* @returns {object} Converted ArrayBuffer
+		*/
 		this.StringToBuffer = function( tString )
 		{
 			// Convert string to proper byte format so it can be exported
