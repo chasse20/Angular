@@ -1,11 +1,13 @@
 <div ng-if="group.model != null" style="display: inline;">
 	<button ng-click="group.isExpanded = !group.isExpanded">{{group.isExpanded ? "Shrink" : "Expand"}}</button>
 	<input type="text" ng-model="group.model.name"/>
-	<div ng-if="group.parent.children.length > 1" style="display: inline;">
-		<button ng-disabled="group.index == 0" ng-click="group.parent.moveChild( group.index, true )">Up</button>
-		<button ng-disabled="group.index == ( group.parent.children.length - 1 )" ng-click="group.parent.moveChild( group.index, false )">Down</button>
+	<div ng-if="group.parent != null" style="display: inline;">
+		<div ng-if="group.parent.children.length > 1" style="display: inline;">
+			<button ng-disabled="group.index == 0" ng-click="group.parent.moveChild( group.index, true )">Up</button>
+			<button ng-disabled="group.index == ( group.parent.children.length - 1 )" ng-click="group.parent.moveChild( group.index, false )">Down</button>
+		</div>
+		<button ng-click="group.parent.removeChild( group.index )">Delete</button>
 	</div>
-	<button ng-click="group.parent.removeChild( group.index )" ng-if="group.parent != null">Delete</button>
 	<button ng-click="group.onCreate()">Create Child</button>
 	<div ng-show="group.isExpanded">
 		<ul ng-if="group.depth < 4">
