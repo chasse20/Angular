@@ -3,7 +3,7 @@
 * @name species
 * @description Root application module
 */
-angular.module( "species", [] );
+angular.module( "species", [ "ngMaterial" ] );
 
 /**
 * @ngdoc object

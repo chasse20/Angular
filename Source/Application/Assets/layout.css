@@ -1,0 +1,91 @@
+html, body
+{
+	margin: 0;
+	border: 0;
+	height: 100%;
+}
+
+body
+{
+	font-family: Roboto, sans-serif;
+	background-color: #dddddd;
+}
+
+navigation
+{
+	line-height: 100px;
+	position: fixed;
+	z-index: 1;
+	background-color: #ffffff;
+	width: 100%;
+	box-shadow: 0px 0px 20px rgba(0,0,0,.125);
+}
+
+.center
+{
+	margin: auto;
+	width: 60%;
+	min-width: 700px;
+}
+
+#navLeft
+{
+	color: #04c3eb;
+	float: left;
+	font-size: 1.4em;
+}
+
+#navRight
+{
+	color: #ffffff;
+	text-align: right;
+	float: right;
+}
+
+#logo
+{
+	vertical-align: top;
+	padding-top: 12px;
+	margin-right: 20px;
+}
+
+navigation label
+{
+	line-height: 50px;
+	text-align: center;
+	min-width: 140px;
+	height: 50px;
+	text-decoration: none;
+	border-radius: 10px;
+	cursor: pointer;
+	border: none;
+	padding: 0;
+	margin-left: 10px;
+	display: inline-block;
+}
+
+#buttonImport
+{
+	background-color: #06e36f;
+}
+
+#buttonExport
+{
+	background-color: #04c3eb;
+}
+
+content
+{
+	margin-top: 150px;
+	top: 200px;
+}
+
+input[type="file"]
+{
+    display: none;
+}
+
+navigation md-icon
+{
+	fill: #ffffff;
+}

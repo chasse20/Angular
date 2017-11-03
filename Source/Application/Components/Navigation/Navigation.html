@@ -1,5 +1,13 @@
-<div>
-	<div>Species Classification Browser</div>
-	<input type="file" on-files-change="navigation.onFilesChanged" on-files-change-context="navigation" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"></input>
-	<button ng-click="navigation.export()">Export</button>
+<div class="center" id="navigationInner">
+	<div id="navLeft">
+		<img src="Application/Assets/Logo.png" id="logo"/>Taxonomy Editor
+	</div>
+	<div id="navRight">
+		<label id="buttonImport">
+			<input type="file" on-files-change="navigation.onFilesChanged" on-files-change-context="navigation" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+			<md-icon md-svg-src="Application/Assets/file-import.svg"></md-icon>Import
+		</label><label id="buttonExport" ng-click="navigation.export()">
+			<md-icon md-svg-src="Application/Assets/file-export.svg"></md-icon>Export
+		</label>
+	</div>
 </div>
