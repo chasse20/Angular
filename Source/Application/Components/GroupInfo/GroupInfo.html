@@ -16,10 +16,10 @@
 		<button ng-click="group.parent.removeChild( group.index )" class="buttonRemove">
 			<md-icon md-svg-src="Application/Assets/delete.svg"></md-icon>Delete
 		</button>
-		<button ng-click="group.onCreate()" class="buttonCreate">
-			<md-icon md-svg-src="Application/Assets/plus.svg"></md-icon>New Child
-		</button>
 	</div>
+	<button ng-click="group.onCreate()" class="buttonCreate">
+		<md-icon md-svg-src="Application/Assets/plus.svg"></md-icon>New Child
+	</button>
 	<div ng-show="group.isExpanded">
 		<ul ng-if="group.depth < 4">
 			<li ng-repeat="subGroup in group.model.children track by $index"><group-info model="subGroup" parent="group.model" index="$index" depth="group.depth + 1"></group-info></li>
