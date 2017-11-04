@@ -3,12 +3,12 @@ html, body
 	margin: 0;
 	border: 0;
 	height: 100%;
+	background-color: #dddddd;
 }
 
 body
 {
 	font-family: Roboto, sans-serif;
-	background-color: #dddddd;
 }
 
 navigation
@@ -18,6 +18,7 @@ navigation
 	z-index: 1;
 	background-color: #ffffff;
 	width: 100%;
+	min-width: 700px;
 	box-shadow: 0px 0px 20px rgba(0,0,0,.125);
 }
 
@@ -49,6 +50,15 @@ navigation
 	margin-right: 20px;
 }
 
+button
+{
+	padding: 0;
+	cursor: pointer;
+	border: none;
+	display: inline-block;
+	background-color: Transparent;
+}
+
 navigation label
 {
 	line-height: 50px;
@@ -64,6 +74,11 @@ navigation label
 	display: inline-block;
 }
 
+navigation label:hover
+{
+	box-shadow: 3px 4px 0px #dddddd;
+}
+
 #buttonImport
 {
 	background-color: #06e36f;
@@ -74,18 +89,109 @@ navigation label
 	background-color: #04c3eb;
 }
 
-content
-{
-	margin-top: 150px;
-	top: 200px;
-}
-
 input[type="file"]
 {
     display: none;
 }
 
+input[type="text"]
+{
+	background-color: Transparent;
+	border: none;
+}
+
+species-info input[type="text"]
+{
+	font-weight: normal;
+}
+
+input[type="text"]:focus
+{
+	background-color: #eeeeee;
+	border:1px solid #5AB0DB;
+}
+
 navigation md-icon
 {
 	fill: #ffffff;
+}
+
+content md-icon
+{
+	fill: #000000;
+}
+
+ul
+{
+	list-style: none;
+}
+
+#contentInner
+{
+	padding: 150px 18% 50px 18%;
+}
+
+button:hover md-icon
+{
+	fill: #04c3eb;
+}
+
+button:hover
+{
+	color: #04c3eb;
+}
+
+button[disabled] md-icon
+{
+	fill: #c8c8c8;
+}
+
+.buttonCreate, .buttonRemove
+{
+	font-size: .8em;
+	margin-left: 10px;
+}
+
+.buttonCreate
+{
+	color: #1ac36a;
+}
+
+.buttonCreate md-icon
+{
+	fill: #1ac36a;
+}
+
+.buttonRemove
+{
+	color: #ef5353;
+}
+
+.buttonRemove md-icon
+{
+	fill: #ef5353;
+}
+
+species-info img
+{
+	height: 100px;
+	border: 4px solid #ffffff;
+}
+
+.details
+{
+	background-color: #e9e9e9;
+	margin-left: 30px;
+	font-size: .9em;
+	padding: 5px 15px 5px 10px;
+}
+
+.details:hover
+{
+	background-color: #efefef;
+}
+
+.wideInput
+{
+	width: 100%;
 }

@@ -1,13 +1,18 @@
-<div ng-if="species.model != null" style="display: inline;">
-	<button ng-click="species.isExpanded = !species.isExpanded">{{species.isExpanded ? "Shrink" : "Expand"}}</button>
+<div ng-if="species.model != null">
+	<button ng-click="species.isExpanded = !species.isExpanded">
+		<md-icon md-svg-src="Application/Assets/arrow-up-bold.svg" ng-show="species.isExpanded"></md-icon>
+		<md-icon md-svg-src="Application/Assets/arrow-down-bold.svg" ng-show="!species.isExpanded"></md-icon>
+	</button>
 	<input type="text" ng-model="species.model.name"/>
-	<button ng-click="species.parent.removeChild( species.index )">Delete</button>
+	<button ng-click="species.parent.removeChild( species.index )" class="buttonRemove">
+		<md-icon md-svg-src="Application/Assets/delete.svg"></md-icon>Delete
+	</button>
 	<br/>
-	<div ng-show="species.isExpanded" style="display: inline;">
-		<img ng-src="{{species.model.image}}"/>
-		<br/>
-		<input type="text" ng-model="species.model.commonName"/>
-		<br/>
-		<input type="text" ng-model="species.model.image"/>
+	<div ng-show="species.isExpanded" class="details">
+		<b>Common Name:</b>
+		<input type="text" ng-model="species.model.commonName" class="wideInput"/>
+		<b>Image Source:</b>
+		<input type="text" ng-model="species.model.image" class="wideInput"/>
+		<a href="{{species.model.image}}" target="_blank"><img ng-src="{{species.model.image}}"/></a>
 	</div>
 </div>

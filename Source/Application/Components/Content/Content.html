@@ -1,5 +1,7 @@
-<div class="center" id="contentInner">
+<div id="contentInner">
 	<ul>
-		<li ng-repeat="subGroup in content.data.kingdoms.children track by $index"><group-info model="subGroup" index="$index" depth="0"></group-info></li>
+		<li ng-repeat="subGroup in content.data.kingdoms.children track by $index">
+			<group-info model="subGroup" index="$index" depth="0"></group-info>
+		</li>
 	</ul>
 </div>
