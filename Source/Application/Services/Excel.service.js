@@ -96,10 +96,7 @@ angular.module( "species" ).service( "Excel", [ "Group", "Species",
 				}
 				
 				// Callback
-				if ( tCallback != null )
-				{
-					tCallback.call( tCallbackContext, tempKingdoms );
-				}
+				tCallback.call( tCallbackContext, tempKingdoms );
 			};
 			
 			tempReader.readAsBinaryString( tExcel );

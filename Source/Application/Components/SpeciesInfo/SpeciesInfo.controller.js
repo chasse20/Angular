@@ -7,6 +7,14 @@ angular.module( "species" ).controller( "SpeciesInfo", [
 	function()
 	{
 		/**
+		* @ngdoc property
+		* @name species.controller:SpeciesInfo#isExpanded
+		* @description Toggles hierarchy visibility
+		* @propertyOf species.controller:SpeciesInfo
+		*/
+		this.isExpanded = false;
+		
+		/**
 		* @ngdoc method
 		* @name species.controller:SpeciesInfo#$onInit
 		* @description Instantiates expanded state

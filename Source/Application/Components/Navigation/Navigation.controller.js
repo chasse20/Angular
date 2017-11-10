@@ -17,7 +17,12 @@ angular.module( "species" ).controller( "Navigation", [ "Data", "$scope",
 		*/
 		this.onFilesChanged = function( event )
 		{
-			Data.Import( event.target.files[0], $scope );
+			var tempOnImport = function()
+			{
+				$scope.$apply();
+			};
+			
+			Data.Import( event.target.files[0], tempOnImport, this );
 		};
 		
 		/**
@@ -28,7 +33,7 @@ angular.module( "species" ).controller( "Navigation", [ "Data", "$scope",
 		*/
 		this.export = function()
 		{
-			Data.Export();
+			Data.Export( "Species" );
 		};
 	}
 ] );

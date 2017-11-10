@@ -9,6 +9,14 @@ angular.module( "species" ).controller( "GroupInfo", [ "Group", "Species",
 	function( Group, Species )
 	{
 		/**
+		* @ngdoc property
+		* @name species.controller:GroupInfo#isExpanded
+		* @description Toggles hierarchy visibility
+		* @propertyOf species.controller:GroupInfo
+		*/
+		this.isExpanded = false;
+		
+		/**
 		* @ngdoc method
 		* @name species.controller:GroupInfo#$onInit
 		* @description Instantiates expanded state
