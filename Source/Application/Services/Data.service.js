@@ -61,12 +61,12 @@ angular.module( "species" ).service( "Data", [ "Excel", "Group", "Species",
 		*/
 		this.Populate = function()
 		{
-			if ( this.data.kingdoms == null )
+			if ( this.kingdoms == null )
 			{
-				this.data.kingdoms = new Group( "Kingdoms" );
+				this.kingdoms = new Group( "Kingdoms" );
 				
 				var tempAnimalia = new Group( "Animalia" );
-				this.data.kingdoms.addChild( tempAnimalia );
+				this.kingdoms.addChild( tempAnimalia );
 				
 				var tempChordata = new Group( "Chordata" );
 				tempAnimalia.addChild( tempChordata );
