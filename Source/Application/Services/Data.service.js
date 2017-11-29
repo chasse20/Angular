@@ -70,17 +70,36 @@ angular.module( "species" ).service( "Data", [ "Excel", "Group", "Species",
 				
 				var tempChordata = new Group( "Chordata" );
 				tempAnimalia.addChild( tempChordata );
+				var tempArthropod = new Group( "Arthropod" );
+				tempAnimalia.addChild( tempArthropod );
 				
 				var tempMammalia = new Group( "Mammalia" );
 				tempChordata.addChild( tempMammalia );
+				var tempActinopterygii = new Group( "Actinopterygii" );
+				tempChordata.addChild( tempActinopterygii );
+				var tempInsecta = new Group( "Insecta" );
+				tempArthropod.addChild( tempInsecta );
 				
 				var tempRodentia = new Group( "Rodentia" );
 				tempMammalia.addChild( tempRodentia );
+				var tempSiluriformes = new Group( "Siluriformes" );
+				tempActinopterygii.addChild( tempSiluriformes );
+				var tempHymenoptera = new Group( "Hymenoptera" );
+				tempInsecta.addChild( tempHymenoptera );
 				
 				var tempSciuridae = new Group( "Sciuridae" );
 				tempRodentia.addChild( tempSciuridae );
+				var tempCricetidae = new Group( "Cricetidae" );
+				tempRodentia.addChild( tempCricetidae );
+				var tempIctaluridae = new Group( "Ictaluridae" );
+				tempSiluriformes.addChild( tempIctaluridae );
+				var tempFormicidae = new Group( "Formicidae" );
+				tempHymenoptera.addChild( tempFormicidae );
 				
 				tempSciuridae.addChild( new Species( "Otospermophilus beecheyi", "California ground squirrel", "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/California_ground_squirrel_at_Point_Lobos.jpg/800px-California_ground_squirrel_at_Point_Lobos.jpg" ) );
+				tempCricetidae.addChild( new Species( "Ondatra zibethicus", "Muskrat", "https://upload.wikimedia.org/wikipedia/commons/8/83/Muskrat_Foraging.JPG" ) );
+				tempIctaluridae.addChild( new Species( "Ictalurus punctatus", "Channel catfish", "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Ictalurus_punctatus3.jpg/1920px-Ictalurus_punctatus3.jpg" ) );
+				tempFormicidae.addChild( new Species( "Solenopsis geminata", "Fire ant", "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/CSIRO_ScienceImage_11133_Tropical_fire_ant.jpg/1280px-CSIRO_ScienceImage_11133_Tropical_fire_ant.jpg" ) );
 			}
 		};
 	}

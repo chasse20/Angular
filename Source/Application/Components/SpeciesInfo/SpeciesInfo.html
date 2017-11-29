@@ -4,15 +4,25 @@
 		<md-icon md-svg-src="Application/Assets/arrow-down-bold.svg" ng-show="!species.isExpanded"></md-icon>
 	</button>
 	<input type="text" ng-model="species.model.name"/>
-	<button ng-click="species.parent.removeChild( species.index )" class="buttonRemove">
-		<md-icon md-svg-src="Application/Assets/delete.svg"></md-icon>Delete
-	</button>
+	<div style="display: inline;">
+		<div ng-if="species.parent.children.length > 1" style="display: inline;">
+			<button ng-disabled="species.index == 0" ng-click="species.parent.moveChild( species.index, true )">
+				<md-icon md-svg-src="Application/Assets/arrow-up-bold-box.svg"></md-icon>
+			</button>
+			<button ng-disabled="species.index == ( species.parent.children.length - 1 )" ng-click="species.parent.moveChild( species.index, false )">
+				<md-icon md-svg-src="Application/Assets/arrow-down-bold-box.svg"></md-icon>
+			</button>
+		</div>
+		<button ng-click="species.parent.removeChild( species.index )" class="buttonRemove">
+			<md-icon md-svg-src="Application/Assets/delete.svg"></md-icon>Delete
+		</button>
+	</div>
 	<br/>
 	<div ng-show="species.isExpanded" class="details">
 		<b>Common Name:</b>
 		<input type="text" ng-model="species.model.commonName" class="wideInput"/>
 		<b>Image Source:</b>
 		<input type="text" ng-model="species.model.image" class="wideInput"/>
-		<a href="{{species.model.image}}" target="_blank"><img ng-src="{{species.model.image}}"/></a>
+		<a href="{{species.model.image}}" target="_blank" ng-show="species.model.image != null"><img ng-src="{{species.model.image}}"/></a>
 	</div>
 </div>
