@@ -13,6 +13,7 @@ angular.module( "species" ).controller( "GroupInfo", [ "Group", "Species",
 		* @name species.controller:GroupInfo#isExpanded
 		* @description Toggles hierarchy visibility
 		* @propertyOf species.controller:GroupInfo
+		* @returns {boolean} True if expanded
 		*/
 		this.isExpanded = false;
 		
