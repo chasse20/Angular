@@ -11,6 +11,7 @@ angular.module( "species" ).controller( "SpeciesInfo", [
 		* @name species.controller:SpeciesInfo#isExpanded
 		* @description Toggles hierarchy visibility
 		* @propertyOf species.controller:SpeciesInfo
+		* @returns {boolean} True if expanded
 		*/
 		this.isExpanded = false;
 		
