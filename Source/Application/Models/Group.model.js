@@ -7,6 +7,24 @@ angular.module( "species" ).factory( "Group", [
 	function()
 	{
 		/**
+		* @ngdoc property
+		* @name species.service:Group#name
+		* @description Name of the Group
+		* @propertyOf species.service:Group
+		* @returns {string}
+		*/
+		this.name = null;
+		
+		/**
+		* @ngdoc property
+		* @name species.service:Group#children
+		* @description Array of child Groups
+		* @propertyOf species.service:Group
+		* @returns {Array}
+		*/
+		this.children = null;
+		
+		/**
 		* @ngdoc method
 		* @name species.service:Group#Group
 		* @description Constructor
@@ -16,7 +34,6 @@ angular.module( "species" ).factory( "Group", [
 		function Group( tName )
 		{
 			this.name = tName;
-			this.children = null;
 		};
 		
 		/**
@@ -53,7 +70,7 @@ angular.module( "species" ).factory( "Group", [
 				this.children.splice( tIndex, 1 );
 				if ( this.children.length == 0 )
 				{
-					delete this.children;
+					this.children = null;
 				}
 				
 				return true;
