@@ -14,7 +14,7 @@ angular.module( "species" ).service( "Data", [ "Excel", "Group", "Species",
 		* @name species.service:Data#kingdoms
 		* @description Root Group instance that forms all of the hierarchy
 		* @propertyOf species.service:Data
-		* @returns {Group} Designated root Group if set
+		* @returns {Group}
 		*/
 		this.kingdoms = null;
 		
