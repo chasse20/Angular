@@ -12,6 +12,7 @@ angular.module( "species" ).controller( "Content", [ "Data",
 		* @name species.controller:Content#data
 		* @description Reference to Data singleton so it can be used in HTML
 		* @propertyOf species.controller:Content
+		* @returns {Data} Data singleton reference
 		*/
 		this.data = Data;
 		
