@@ -5,25 +5,7 @@
 */
 angular.module( "species" ).factory( "Group", [
 	function()
-	{
-		/**
-		* @ngdoc property
-		* @name species.service:Group#name
-		* @description Name of the Group
-		* @propertyOf species.service:Group
-		* @returns {string}
-		*/
-		this.name = null;
-		
-		/**
-		* @ngdoc property
-		* @name species.service:Group#children
-		* @description Array of child Groups
-		* @propertyOf species.service:Group
-		* @returns {Array}
-		*/
-		this.children = null;
-		
+	{		
 		/**
 		* @ngdoc method
 		* @name species.service:Group#Group
@@ -35,6 +17,24 @@ angular.module( "species" ).factory( "Group", [
 		{
 			this.name = tName;
 		};
+		
+		/**
+		* @ngdoc property
+		* @name species.service:Group#name
+		* @description Name of the Group
+		* @propertyOf species.service:Group
+		* @returns {string}
+		*/
+		Group.prototype.name = null;
+		
+		/**
+		* @ngdoc property
+		* @name species.service:Group#children
+		* @description Array of child Groups
+		* @propertyOf species.service:Group
+		* @returns {Array}
+		*/
+		Group.prototype.children = null;
 		
 		/**
 		* @ngdoc method
