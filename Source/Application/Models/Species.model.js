@@ -5,34 +5,7 @@
 */
 angular.module( "species" ).factory( "Species", [
 	function()
-	{
-		/**
-		* @ngdoc property
-		* @name species.service:Species#name
-		* @description Name of the Species
-		* @propertyOf species.service:Species
-		* @returns {string}
-		*/
-		this.name = null;
-		
-		/**
-		* @ngdoc property
-		* @name species.service:Species#commonName
-		* @description Common Name of the Species
-		* @propertyOf species.service:Species
-		* @returns {string}
-		*/
-		this.commonName = null;
-		
-		/**
-		* @ngdoc property
-		* @name species.service:Species#image
-		* @description Image URL of the Species
-		* @propertyOf species.service:Species
-		* @returns {string}
-		*/
-		this.image = null;
-		
+	{		
 		/**
 		* @ngdoc method
 		* @name species.service:Species#Species
@@ -48,6 +21,33 @@ angular.module( "species" ).factory( "Species", [
 			this.commonName = tCommonName;
 			this.image = tImage;
 		};
+		
+		/**
+		* @ngdoc property
+		* @name species.service:Species#name
+		* @description Name of the Species
+		* @propertyOf species.service:Species
+		* @returns {string}
+		*/
+		Species.prototype.name = null;
+		
+		/**
+		* @ngdoc property
+		* @name species.service:Species#commonName
+		* @description Common Name of the Species
+		* @propertyOf species.service:Species
+		* @returns {string}
+		*/
+		Species.prototype.commonName = null;
+		
+		/**
+		* @ngdoc property
+		* @name species.service:Species#image
+		* @description Image URL of the Species
+		* @propertyOf species.service:Species
+		* @returns {string}
+		*/
+		Species.prototype.image = null;
 		
 		return Species;
 	}
