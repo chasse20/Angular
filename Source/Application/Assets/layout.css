@@ -29,14 +29,14 @@ navigation
 	min-width: 700px;
 }
 
-#navLeft
+header
 {
 	color: #04c3eb;
 	float: left;
 	font-size: 1.4em;
 }
 
-#navRight
+nav
 {
 	color: #ffffff;
 	text-align: right;

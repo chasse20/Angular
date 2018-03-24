@@ -1,13 +1,13 @@
 <div class="center" id="navigationInner">
-	<div id="navLeft">
+	<header>
 		<img src="Application/Assets/Logo.png" id="logo"/>Taxonomy Editor
-	</div>
-	<div id="navRight">
+	</header>
+	<nav>
 		<label id="buttonImport">
 			<input type="file" on-files-change="navigation.onFilesChanged" on-files-change-context="navigation" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
 			<md-icon md-svg-src="Application/Assets/file-import.svg"></md-icon>Import Excel
 		</label><label id="buttonExport" ng-click="navigation.export()">
 			<md-icon md-svg-src="Application/Assets/file-export.svg"></md-icon>Export Excel
 		</label>
-	</div>
+	</nav>
 </div>
